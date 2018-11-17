@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="Retro BIOS Tool">
+		<setting id="rbt_folder" type="folder" label="Folder Containing BIOS Files" visible="true"/>
+		<setting visible="true" label="Run BIOS Tool" type="action" option="close" action="RunScript(special://home/addons/plugin.program.retrobiostool/retrobiostool.py)"/>
+	</category>
+</settings>
