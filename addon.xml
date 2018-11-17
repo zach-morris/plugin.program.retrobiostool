@@ -13,7 +13,7 @@
     <platform>all</platform>
     <summary lang="en_GB">Retro BIOS Tool</summary>
     <description lang="en_GB">RBT will put your BIOS files in the appropriate location</description>
-    <license>CC BY-SA 4.0, GNU GENERAL PUBLIC LICENSE Version 2.0</license>
+    <license>GNU General Public License v3.0</license>
     <source>https://github.com/zach-morris/plugin.program.retrobiostool</source>
     <assets>
       <icon>icon.jpg</icon>
