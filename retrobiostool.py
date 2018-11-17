@@ -77,7 +77,7 @@ if not WIN.getProperty('rbt.script_started'):
 					current_addon_resources_folder = os.path.join(current_addon_data_folder,'resources')
 					current_addon_systems_folder = os.path.join(current_addon_resources_folder,'system')
 					for cbf in current_bios_files:
-						current_bios_fullpath = os.path.join(bios_folder,cbf)
+						current_bios_fullpath = os.path.join(bios_folder,*os.path.split(cbf))
 						if xbmcvfs.exists(current_bios_fullpath):
 							xbmc.log(msg='Retro BIOS Tool: Found file %(current_cbf)s' % {'current_cbf':cbf}, level=xbmc.LOGDEBUG)
 							if not xbmcvfs.exists(os.path.join(current_addon_data_folder,'')):
