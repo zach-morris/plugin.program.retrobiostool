@@ -6,7 +6,7 @@ requests.packages.urllib3.disable_warnings() #Silence uneeded warnings
 WIN = xbmcgui.Window(10000)
 # WIN.clearProperty('rbt.script_started')
 if not WIN.getProperty('rbt.script_started'):
-	xbmc.log(msg='Retro BIOS Tool:  Tool Started', level=xbmc.LOGDEBUG)
+	xbmc.log(msg='Retro BIOS Tool:  Tool Started', level=xbmc.LOGNOTICE)
 	WIN.setProperty('rbt.script_started','True')
 	addon_name = 'plugin.program.retrobiostool'
 	addon_handle = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':addon_name})
@@ -51,8 +51,6 @@ if not WIN.getProperty('rbt.script_started'):
 			s = requests.Session()
 			for iiaid,aid in enumerate(addon_ids):
 				dp.update(100*(iiaid+1)/len(addon_ids))
-				print('zzz')
-				print(100*(iiaid+1)/len(addon_ids))
 				if dp.iscanceled():
 					run_was_cancelled = True
 					dp.close()
@@ -96,21 +94,21 @@ if not WIN.getProperty('rbt.script_started'):
 									xbmc.log(msg='Retro BIOS Tool:  Unable to create addon_data resources/system folder', level=xbmc.LOGERROR)
 							if not xbmcvfs.exists(os.path.join(current_addon_systems_folder,cbf)):
 								if xbmcvfs.copy(os.path.join(bios_folder,cbf),os.path.join(current_addon_systems_folder,cbf)): #Copy the file to the correct system folder
-									xbmc.log(msg='Retro BIOS Tool: Copying file %(current_cbf)s to %(current_folder)s' % {'current_cbf':os.path.join(bios_folder,cbf),'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGDEBUG)
+									xbmc.log(msg='Retro BIOS Tool: Copying file %(current_cbf)s to %(current_folder)s' % {'current_cbf':os.path.join(bios_folder,cbf),'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGNOTICE)
 									total_files_copied = total_files_copied+1
 								else:
 									xbmc.log(msg='Retro BIOS Tool: Error copying file %(current_cbf)s to %(current_folder)s' % {'current_cbf':os.path.join(bios_folder,cbf),'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGERROR)
 						else:
 							xbmc.log(msg='Retro BIOS Tool: File already exists %(current_cbf)s ' % {'current_cbf':os.path.join(bios_folder,cbf)}, level=xbmc.LOGERROR)
 				else:
-					xbmc.log(msg='Retro BIOS Tool: No bios files found for %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGDEBUG)
+					xbmc.log(msg='Retro BIOS Tool: No bios files found for %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGNOTICE)
 			dp.close()
+			current_dialog = xbmcgui.Dialog()
+			if total_files_copied >0:
+				ok_ret = current_dialog.ok('Completed','Tool copied %(total_files_copied)s total files.'% {'total_files_copied': total_files_copied})
+			else:
+				ok_ret = current_dialog.ok('Completed','Tool did not copy any files'% {'total_files_copied': total_files_copied})
 	WIN.clearProperty('rbt.script_started')
-	xbmc.log(msg='Retro BIOS Tool:  Tool completed', level=xbmc.LOGDEBUG)
-	current_dialog = xbmcgui.Dialog()
-	if total_files_copied >0:
-		ok_ret = current_dialog.ok('Completed','Tool copied %(total_files_copied)s total files.'% {'total_files_copied': total_files_copied})
-	else:
-		ok_ret = current_dialog.ok('Completed','Tool did not copy any files'% {'total_files_copied': total_files_copied})
+	xbmc.log(msg='Retro BIOS Tool:  Tool completed', level=xbmc.LOGNOTICE)
 else:
-	xbmc.log(msg='Retro BIOS Tool:  Tool already running', level=xbmc.LOGDEBUG)
+	xbmc.log(msg='Retro BIOS Tool:  Tool already running', level=xbmc.LOGNOTICE)
