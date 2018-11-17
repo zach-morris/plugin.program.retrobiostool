@@ -1,6 +1,6 @@
 <meta name=”robots” content=”noindex, nofollow”>
 
-Retro BIOS Tool
+![](https://raw.githubusercontent.com/zach-morris/plugin.program.retrobiostool/master/icon.jpg?display=inline-block) Retro BIOS Tool
 ==========================
 
 This is a simple tool to copy BIOS files to the appropriate spot for Kodi game.libretro addons
