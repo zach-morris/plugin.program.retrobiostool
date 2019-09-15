@@ -287,7 +287,10 @@ def rbt_main():
 								xbmc.log(msg='Retro BIOS Tool: BIOS file %(current_cbf)s already present in %(current_folder)s' % {'current_cbf':cbf,'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGNOTICE)
 								report_data['firmware_found'][-1][report_data['firmware_files'][-1].index(cbf)] = True
 						else:
-							report_data['firmware_found'][-1][report_data['firmware_files'][-1].index(cbf)] = False
+							if xbmcvfs.exists(os.path.join(current_addon_systems_folder,cbf)):
+								report_data['firmware_found'][-1][report_data['firmware_files'][-1].index(cbf)] = True
+							else:
+								report_data['firmware_found'][-1][report_data['firmware_files'][-1].index(cbf)] = False
 							xbmc.log(msg='Retro BIOS Tool: Unable to find the file in your BIOS folder %(current_cbf)s ' % {'current_cbf':os.path.join(bios_folder,cbf)}, level=xbmc.LOGERROR)
 				else:
 					xbmc.log(msg='Retro BIOS Tool: No bios files found for %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGNOTICE)
