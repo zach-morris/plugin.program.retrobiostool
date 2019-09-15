@@ -317,7 +317,7 @@ def rbt_main():
 			if report_item.endswith(', '):
 				report_item = report_item[:-2]
 			li = xbmcgui.ListItem(report_item, offscreen=True)
-			li.setInfo('video', {'plot': report_data['firmware_found'][iiaid]})
+			li.setInfo('video', {'plot': report_data['info_file'][iiaid]})
 			if xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))):
 				li.setArt({ 'icon': xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))})
 			elif xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.png'))):
