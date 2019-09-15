@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.program.retrobiostool" name="Retro BIOS Tool" version="0.1">
+<addon id="plugin.program.retrobiostool" name="Retro BIOS Tool" version="0.2">
   <requires>
     <import addon="xbmc.python" version="2.25.0"/>
     <import addon="script.module.kodi-six"/>
     <import addon="script.module.requests"/>
+    <import addon="script.module.routing"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="retrobiostool.py">
     <provides>executable</provides>
@@ -12,7 +13,7 @@
     <!-- <reuselanguageinvoker>false</reuselanguageinvoker> -->
     <platform>all</platform>
     <summary lang="en_GB">Retro BIOS Tool</summary>
-    <description lang="en_GB">RBT will put your BIOS files in the appropriate location</description>
+    <description lang="en_GB">Retro BIOS Tool will scan a folder of your choosing and copy the appropriate files for use in Kodi game addons</description>
     <license>GNU General Public License v3.0</license>
     <source>https://github.com/zach-morris/plugin.program.retrobiostool</source>
     <assets>
