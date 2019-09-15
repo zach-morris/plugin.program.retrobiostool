@@ -207,7 +207,7 @@ def rbt_main():
 		ret = current_dialog.ok('Retro BIOS Tool','The tool did not run.[CR]Enter a BIOS file location in settings first!')
 	else:
 		try:
-			addons_available = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "Addons.GetAddons","params":{"type":"kodi.gameclient"}, "id": "1"}')
+			addons_available = xbmc.executeJSONRPC('{ "jsonrpc": "2.0", "method": "Addons.GetAddons","params":{"type":"kodi.gameclient", "enabled": true}, "id": "1"}')
 			addon_ids = [x.get('addonid') for x in json.loads(addons_available).get('result').get('addons') if x.get('type') == 'kodi.gameclient' and x.get('addonid') not in ignore_these_addons]
 			xbmc.log(msg='Retro BIOS Tool:  The following addons will be checked %(current_aids)s' % {'current_aids':', '.join(addon_ids)}, level=xbmc.LOGDEBUG)
 		except:
