@@ -4,6 +4,26 @@ import os, requests, json, re, routing
 import requests.packages.urllib3
 requests.packages.urllib3.disable_warnings() #Silence uneeded warnings
 plugin_handle = routing.Plugin() #Plugin Handle
+# xbmcplugin.setContent(plugin_handle.handle,'movies')
+
+def copy_directory_contents_xbmcvfs(directory_from,directory_to):
+	overall_success = True
+	files_out = list()
+	dirs_in_dir, files_in_dir = xbmcvfs.listdir(os.path.join(directory_from,''))
+	for ff in files_in_dir:
+		if not xbmcvfs.copy(os.path.join(directory_from,ff),os.path.join(directory_to,ff)): #If move does not work, then copy
+			overall_success = False
+		else:
+			xbmc.log(msg='Retro BIOS Tool:  The file was copied from: %(file_from)s, to: %(file_to)s' % {'file_from': os.path.join(directory_from,ff), 'file_to': os.path.join(directory_to,ff)}, level=xbmc.LOGDEBUG)
+			files_out.append(os.path.join(directory_to,ff))
+	for dd in dirs_in_dir:
+		if xbmcvfs.exists(os.path.join(directory_to,dd,'')) or xbmcvfs.mkdir(os.path.join(directory_to,dd)):
+			files_out2, success = copy_directory_contents_xbmcvfs(os.path.join(directory_from,dd),os.path.join(directory_to,dd))
+			files_out = files_out + files_out2
+		else:
+			overall_success = False
+	return files_out, overall_success
+
 @plugin_handle.route('/')
 def rbt_main():
 	# WIN = xbmcgui.Window(10000)
@@ -21,7 +41,7 @@ def rbt_main():
 	addon_timeout = 5
 	bios_keyword = ['firmware%(number)s_path'%{'number':x} for x in range(0,21)]
 	libretro_git = r'https://raw.githubusercontent.com/libretro/libretro-super/master/dist/info/xxx_core_xxx.info'
-	#These games are already known to not require any system/bios files, so skip them
+	#These games are already known to not require any system/bios files, so skip them to make the tool faster
 	ignore_these_addons = ['game.libretro',
 							 'game.libretro.2048',
 							 'game.libretro.2048_libretro_buildbot',
@@ -83,26 +103,6 @@ def rbt_main():
 							 'game.libretro.gw_libretro_buildbot',
 							 'game.libretro.lutro',
 							 'game.libretro.lutro_libretro_buildbot',
-							 'game.libretro.mame',
-							 'game.libretro.mame2000',
-							 'game.libretro.mame2000_libretro_buildbot',
-							 'game.libretro.mame2003',
-							 'game.libretro.mame2003_libretro_buildbot',
-							 'game.libretro.mame2003_midway',
-							 'game.libretro.mame2003_midway_libretro_buildbot',
-							 'game.libretro.mame2003_plus',
-							 'game.libretro.mame2003_plus_libretro_buildbot',
-							 'game.libretro.mame2009',
-							 'game.libretro.mame2009_libretro_buildbot',
-							 'game.libretro.mame2010',
-							 'game.libretro.mame2010_libretro_buildbot',
-							 'game.libretro.mame2014',
-							 'game.libretro.mame2014_libretro_buildbot',
-							 'game.libretro.mame2015',
-							 'game.libretro.mame2015_libretro_buildbot',
-							 'game.libretro.mame2016',
-							 'game.libretro.mame2016_libretro_buildbot',
-							 'game.libretro.mame_libretro_buildbot',
 							 'game.libretro.mednafen_ngp',
 							 'game.libretro.mednafen_ngp_libretro_buildbot',
 							 'game.libretro.mednafen_snes',
@@ -111,8 +111,6 @@ def rbt_main():
 							 'game.libretro.mednafen_vb_libretro_buildbot',
 							 'game.libretro.mednafen_wswan',
 							 'game.libretro.mednafen_wswan_libretro_buildbot',
-							 'game.libretro.mess2015',
-							 'game.libretro.mess2015_libretro_buildbot',
 							 'game.libretro.meteor',
 							 'game.libretro.meteor_libretro_buildbot',
 							 'game.libretro.mrboom',
@@ -155,8 +153,6 @@ def rbt_main():
 							 'game.libretro.thepowdertoy_libretro_buildbot',
 							 'game.libretro.tyrquake',
 							 'game.libretro.tyrquake_libretro_buildbot',
-							 'game.libretro.ume2015',
-							 'game.libretro.ume2015_libretro_buildbot',
 							 'game.libretro.vecx',
 							 'game.libretro.vecx_libretro_buildbot',
 							 'game.libretro.vice_x128',
@@ -194,6 +190,36 @@ def rbt_main():
 	'uae':'puae',
 	'vba-next':'vba_next',
 	'vice':'vice_x64'}
+
+	#These special cases have folders listed in their info files rather than all the individual files, need to copy the entire folder
+	special_folder_cases_map ={'game.libretro.bluemsx':['Databases','Machines'],
+	'game.libretro.bluemsx_libretro_buildbot':['Databases','Machines'],
+	'game.libretro.reicast':['dc'],
+	'game.libretro.dolphin_libretro_buildbot':['dolphin-emu'],
+	'game.libretro.dolphin':['dolphin-emu'],
+	'game.libretro.mame':['mame'],
+	'game.libretro.mame_libretro_buildbot':['mame'],
+	'game.libretro.mame2000':['mame2000'],
+	'game.libretro.mame2000_libretro_buildbot':['mame2000'],
+	'game.libretro.mame2003':['mame2003'],
+	'game.libretro.mame2003_libretro_buildbot':['mame2003'],
+	'game.libretro.mame2003_plus':['mame2003-plus'],
+	'game.libretro.mame2003_plus_libretro_buildbot':['mame2003-plus'],
+	'game.libretro.mame2010':['mame2010'],
+	'game.libretro.mame2010_libretro_buildbot':['mame2010'],
+	'game.libretro.mame2014':['mame2014'],
+	'game.libretro.mame2014_libretro_buildbot':['mame2014'],
+	'game.libretro.mame2015':['mame2015'],
+	'game.libretro.mame2015_libretro_buildbot':['mame2015'],
+	'game.libretro.mess2015':['mess2015'],
+	'game.libretro.mess2015_libretro_buildbot':['mess2015'],
+	'game.libretro.ppsspp':['PPSSPP'],
+	'game.libretro.ppsspp_libretro_buildbot':['PPSSPP'],
+	'game.libretro.puae':['uae_data'],
+	'game.libretro.puae_libretro_buildbot':['uae_data'],
+	'game.libretro.ume2014':['ume2014'],
+	'game.libretro.ume2014_libretro_buildbot':['ume2014'],
+	}
 
 	#Initialize report dict
 	report_data = dict()
@@ -254,7 +280,7 @@ def rbt_main():
 						report_data['firmware_found'][-1] = [False for x in current_bios_files]
 					else:
 						report_data['firmware_files'][-1] = [current_bios_files]
-						report_data['firmware_files'][-1] = [False]
+						report_data['firmware_found'][-1] = [False]
 					xbmc.log(msg='Retro BIOS Tool:  Looking for the following bios files %(current_files)s' % {'current_files':', '.join(current_bios_files)}, level=xbmc.LOGDEBUG)
 					current_addon = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':aid})
 					current_addon_data_folder = xbmc.translatePath(current_addon.getAddonInfo('profile')).decode('utf-8')
@@ -284,7 +310,7 @@ def rbt_main():
 								else:
 									xbmc.log(msg='Retro BIOS Tool: Error copying file %(current_cbf)s to %(current_folder)s' % {'current_cbf':os.path.join(bios_folder,cbf),'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGERROR)
 							else:
-								xbmc.log(msg='Retro BIOS Tool: BIOS file %(current_cbf)s already present in %(current_folder)s' % {'current_cbf':cbf,'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGNOTICE)
+								xbmc.log(msg='Retro BIOS Tool: BIOS file %(current_cbf)s already present in %(current_folder)s' % {'current_cbf':cbf,'current_folder':os.path.join(current_addon_systems_folder,cbf)}, level=xbmc.LOGDEBUG)
 								report_data['firmware_found'][-1][report_data['firmware_files'][-1].index(cbf)] = True
 						else:
 							if xbmcvfs.exists(os.path.join(current_addon_systems_folder,cbf)):
@@ -293,8 +319,54 @@ def rbt_main():
 								report_data['firmware_found'][-1][report_data['firmware_files'][-1].index(cbf)] = False
 							xbmc.log(msg='Retro BIOS Tool: Unable to find the file in your BIOS folder %(current_cbf)s ' % {'current_cbf':os.path.join(bios_folder,cbf)}, level=xbmc.LOGERROR)
 				else:
-					xbmc.log(msg='Retro BIOS Tool: No bios files found for %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGNOTICE)
+					xbmc.log(msg='Retro BIOS Tool: No bios files found for %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGDEBUG)
 					report_data['firmware_listed'][-1] = False
+				#Check folder specific cases
+				if aid in special_folder_cases_map.keys():
+					current_addon = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':aid})
+					current_addon_data_folder = xbmc.translatePath(current_addon.getAddonInfo('profile')).decode('utf-8')
+					current_addon_resources_folder = os.path.join(current_addon_data_folder,'resources')
+					current_addon_systems_folder = os.path.join(current_addon_resources_folder,'system')
+					current_bios_folder_fullpaths = [os.path.join(bios_folder,x) for x in special_folder_cases_map[aid]]
+					current_ind_folders = [x for x in special_folder_cases_map[aid]]
+					for cbfi,current_bios_folder_fullpath in enumerate(current_bios_folder_fullpaths):
+						report_data['firmware_listed'][-1] = True
+						report_data['firmware_files'][-1] = [', '.join([x+' (Folder)' for x in special_folder_cases_map[aid]])]
+						report_data['firmware_found'][-1] = [False]
+						xbmc.log(msg='Retro BIOS Tool:  Looking for the following bios folder %(current_folder)s' % {'current_folder':current_ind_folders[cbfi]}, level=xbmc.LOGDEBUG)
+						if xbmcvfs.exists(os.path.join(current_bios_folder_fullpath,'')):
+							if not xbmcvfs.exists(os.path.join(current_addon_data_folder,'')):
+								xbmc.log(msg='Retro BIOS Tool:  The folder %(current_folder)s does not yet exist, so it will be created' % {'current_folder':current_addon_data_folder}, level=xbmc.LOGDEBUG)
+								if not xbmcvfs.mkdir(os.path.join(current_addon_data_folder,'')):
+									xbmc.log(msg='Retro BIOS Tool:  Unable to create addon_data folder', level=xbmc.LOGERROR)
+							if not xbmcvfs.exists(os.path.join(current_addon_resources_folder,'')):
+								xbmc.log(msg='Retro BIOS Tool:  The folder %(current_folder)s does not yet exist, so it will be created' % {'current_folder':current_addon_resources_folder}, level=xbmc.LOGDEBUG)
+								if not xbmcvfs.mkdir(os.path.join(current_addon_resources_folder,'')):
+									xbmc.log(msg='Retro BIOS Tool:  Unable to create addon_data resources folder', level=xbmc.LOGERROR)
+							if not xbmcvfs.exists(os.path.join(current_addon_systems_folder,'')):
+								xbmc.log(msg='Retro BIOS Tool:  The folder %(current_folder)s does not yet exist, so it will be created' % {'current_folder':current_addon_systems_folder}, level=xbmc.LOGDEBUG)
+								if not xbmcvfs.mkdir(os.path.join(current_addon_systems_folder,'')):
+									xbmc.log(msg='Retro BIOS Tool:  Unable to create addon_data resources/system folder', level=xbmc.LOGERROR)
+							if not xbmcvfs.exists(os.path.join(current_addon_systems_folder,current_ind_folders[cbfi],'')):
+								copied_folder_files, folder_copy_success = copy_directory_contents_xbmcvfs(current_bios_folder_fullpath,os.path.join(current_addon_systems_folder,current_ind_folders[cbfi]))
+								if folder_copy_success:
+									xbmc.log(msg='Retro BIOS Tool: Successfully copied the BIOS folder %(current_folder)s ' % {'current_folder':os.path.join(bios_folder,current_ind_folders[cbfi])}, level=xbmc.LOGDEBUG)
+									report_data['firmware_found'][-1] = [True]
+									total_files_copied = total_files_copied+1
+								else:
+									xbmc.log(msg='Retro BIOS Tool: The BIOS folder %(current_folder)s was found but could not be copied' % {'current_folder':os.path.join(bios_folder,current_ind_folders[cbfi])}, level=xbmc.LOGERROR)
+									report_data['firmware_found'][-1] = [False]
+							else:
+								xbmc.log(msg='Retro BIOS Tool: The BIOS folder %(current_folder)s is already present' % {'current_folder':os.path.join(current_addon_systems_folder,current_ind_folders[cbfi])}, level=xbmc.LOGDEBUG)
+								report_data['firmware_found'][-1] = [True]
+
+						else:
+							if xbmcvfs.exists(os.path.join(current_addon_systems_folder,current_ind_folders[cbfi],'')):
+								report_data['firmware_found'][-1] = [True]
+								xbmc.log(msg='Retro BIOS Tool: The BIOS folder is already present in your addon folder %(current_folder)s ' % {'current_folder':os.path.join(current_addon_systems_folder,current_ind_folders[cbfi])}, level=xbmc.LOGDEBUG)
+							else:
+								report_data['firmware_found'][-1] = [False]
+								xbmc.log(msg='Retro BIOS Tool: Unable to find the folder in your BIOS folder %(current_folder)s ' % {'current_folder':os.path.join(current_addon_systems_folder,current_ind_folders[cbfi])}, level=xbmc.LOGDEBUG)
 			dp.close()
 			current_dialog = xbmcgui.Dialog()
 			if total_files_copied >0:
@@ -317,7 +389,7 @@ def rbt_main():
 			if report_item.endswith(', '):
 				report_item = report_item[:-2]
 			li = xbmcgui.ListItem(report_item, offscreen=True)
-			li.setInfo('video', {'plot': report_data['info_file'][iiaid]})
+			li.setInfo('video', {'plot': report_subitem+'[CR]'+report_data['info_file'][iiaid]})
 			if xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))):
 				li.setArt({ 'icon': xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))})
 			elif xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.png'))):
