@@ -6,6 +6,7 @@ Retro BIOS Tool
 This is a simple tool to copy BIOS files to the appropriate spot for Kodi game.libretro addons
 
 To install:
+
 Download the latest addon zip [here](https://github.com/zach-morris/plugin.program.retrobiostool/releases), and install it in Kodi.
 
 To use:
