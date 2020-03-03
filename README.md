@@ -34,10 +34,6 @@ Note: You need to be connected to the internet in order for the tool to pull BIO
 
 ![](https://i.imgur.com/nZFkJ3w.png) 
 
-
-Press the Run Tool button
-
-
 Licenses
 -------------
 
