@@ -1,4 +1,5 @@
 from kodi_six import xbmc, xbmcaddon, xbmcgui, xbmcvfs, xbmcplugin
+from kodi_six.utils import py2_encode, py2_decode
 from contextlib import closing
 import os, requests, json, re, routing
 import requests.packages.urllib3
@@ -246,7 +247,7 @@ def rbt_main():
 			dp.update(0)
 			s = requests.Session()
 			for iiaid,aid in enumerate(addon_ids):
-				dp.update(100*(iiaid+1)/len(addon_ids))
+				dp.update(int(100*(iiaid+1)/len(addon_ids)))
 				xbmc.log(msg='Retro BIOS Tool: Checking addon %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGNOTICE)
 				report_data['addon_id'].append(aid)
 				report_data['firmware_listed'].append(False)
@@ -284,7 +285,7 @@ def rbt_main():
 						report_data['firmware_found'][-1] = [False]
 					xbmc.log(msg='Retro BIOS Tool:  Looking for the following bios files %(current_files)s' % {'current_files':', '.join(current_bios_files)}, level=xbmc.LOGDEBUG)
 					current_addon = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':aid})
-					current_addon_data_folder = xbmc.translatePath(current_addon.getAddonInfo('profile')).decode('utf-8')
+					current_addon_data_folder = py2_decode(xbmc.translatePath(current_addon.getAddonInfo('profile')))
 					current_addon_resources_folder = os.path.join(current_addon_data_folder,'resources')
 					current_addon_systems_folder = os.path.join(current_addon_resources_folder,'system')
 					for cbf in current_bios_files:
@@ -325,7 +326,7 @@ def rbt_main():
 				#Check folder specific cases
 				if aid in special_folder_cases_map.keys():
 					current_addon = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':aid})
-					current_addon_data_folder = xbmc.translatePath(current_addon.getAddonInfo('profile')).decode('utf-8')
+					current_addon_data_folder = py2_decode(xbmc.translatePath(current_addon.getAddonInfo('profile')))
 					current_addon_resources_folder = os.path.join(current_addon_data_folder,'resources')
 					current_addon_systems_folder = os.path.join(current_addon_resources_folder,'system')
 					current_bios_folder_fullpaths = [os.path.join(bios_folder,x) for x in special_folder_cases_map[aid]]
