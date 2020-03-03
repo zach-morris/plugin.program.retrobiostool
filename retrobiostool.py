@@ -230,6 +230,7 @@ def rbt_main():
 	report_data['info_file'] = list()
 
 	if bios_folder is None or len(bios_folder)<1:
+		current_dialog = xbmcgui.Dialog()
 		ret = current_dialog.ok('Retro BIOS Tool','The tool did not run.[CR]Enter a BIOS file location in settings first!')
 	else:
 		try:
