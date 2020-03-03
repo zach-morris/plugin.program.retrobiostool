@@ -1,18 +1,44 @@
 <meta name=”robots” content=”noindex, nofollow”>
 
-Retro BIOS Tool
+![](https://github.com/zach-morris/plugin.program.retrobiostool/raw/master/icon.jpg) Retro BIOS Tool
 ==========================
 
-This is a simple tool to copy BIOS files to the appropriate spot for Kodi game.libretro addons
+The Retro BIOS Tool is a simple tool to copy BIOS files to the appropriate spot for Kodi game.libretro addons
 
-To install:
 
-Download the latest addon zip [here](https://github.com/zach-morris/plugin.program.retrobiostool/releases), and install it in Kodi.
+Installation
+-------------
 
-To use:
-1) In the tool settings, point to the local folder containing your BIOS files
-2) Choose match by filename or match by md5
-3) Press the Run Tool button
+Install Retro BIOS Tool in one of these ways:
 
-Notes:
-You need to be connected to the internet in order for the tool to find the appropriate BIOS information
+- Download the repository zipfile from [here](https://github.com/zach-morris/repository.zachmorris/raw/master/repository.zachmorris/repository.zachmorris-1.0.0.zip) to install the addon and get automatic updates.
+
+or
+
+- Download the latest version zipfile from [here](https://github.com/zach-morris/repository.zachmorris/tree/master/plugin.program.retrobiostool) to install by zipfile.
+
+
+Use
+-------------------
+Note: You need to be connected to the internet in order for the tool to pull BIOS information.
+
+1) Open the addon settings, set the folder the addon should search and copy BIOS files from.  You can also toggle the report page on and off in the addon settings.
+
+![](https://i.imgur.com/qX71cd5.png) 
+
+2) Run the addon.  It will search the selected folder for BIOS files to copy to the approprate game.libretro addon folders within Kodi.
+
+![](https://i.imgur.com/O5GSLVo.png) 
+
+3) Review the report.  This will show you which BIOS files are present (in green) for game addons and which are missing (in red).
+
+![](https://i.imgur.com/nZFkJ3w.png) 
+
+
+Press the Run Tool button
+
+
+Licenses
+-------------
+
+This addon is released under the [GNU GENERAL PUBLIC LICENSE Version 3](https://www.gnu.org/licenses/gpl-3.0.en.html).
