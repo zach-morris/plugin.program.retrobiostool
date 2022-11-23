@@ -285,7 +285,7 @@ def rbt_main():
 						report_data['firmware_found'][-1] = [False]
 					xbmc.log(msg='Retro BIOS Tool:  Looking for the following bios files %(current_files)s' % {'current_files':', '.join(current_bios_files)}, level=xbmc.LOGDEBUG)
 					current_addon = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':aid})
-					current_addon_data_folder = py2_decode(xbmc.translatePath(current_addon.getAddonInfo('profile')))
+					current_addon_data_folder = py2_decode(xbmcvfs.translatePath(current_addon.getAddonInfo('profile')))
 					current_addon_resources_folder = os.path.join(current_addon_data_folder,'resources')
 					current_addon_systems_folder = os.path.join(current_addon_resources_folder,'system')
 					for cbf in current_bios_files:
@@ -326,7 +326,7 @@ def rbt_main():
 				#Check folder specific cases
 				if aid in special_folder_cases_map.keys():
 					current_addon = xbmcaddon.Addon(id='%(addon_name)s' % {'addon_name':aid})
-					current_addon_data_folder = py2_decode(xbmc.translatePath(current_addon.getAddonInfo('profile')))
+					current_addon_data_folder = py2_decode(xbmcvfs.translatePath(current_addon.getAddonInfo('profile')))
 					current_addon_resources_folder = os.path.join(current_addon_data_folder,'resources')
 					current_addon_systems_folder = os.path.join(current_addon_resources_folder,'system')
 					current_bios_folder_fullpaths = [os.path.join(bios_folder,x) for x in special_folder_cases_map[aid]]
@@ -392,14 +392,14 @@ def rbt_main():
 				report_item = report_item[:-2]
 			li = xbmcgui.ListItem(report_item, offscreen=True)
 			li.setInfo('video', {'plot': report_subitem+'[CR]'+report_data['info_file'][iiaid]})
-			if xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))):
-				li.setArt({ 'icon': xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))})
-			elif xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.png'))):
-				li.setArt({ 'icon': xbmc.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.png'))})
-			elif xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.jpg'))):
-				li.setArt({ 'icon': xbmc.translatePath(os.path.join('special://home','addons',str(aid),'icon.jpg'))})
-			elif xbmcvfs.exists(xbmc.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.jpg'))):
-				li.setArt({ 'icon': xbmc.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.jpg'))})
+			if xbmcvfs.exists(xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))):
+				li.setArt({ 'icon': xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'icon.png'))})
+			elif xbmcvfs.exists(xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.png'))):
+				li.setArt({ 'icon': xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.png'))})
+			elif xbmcvfs.exists(xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'icon.jpg'))):
+				li.setArt({ 'icon': xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'icon.jpg'))})
+			elif xbmcvfs.exists(xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.jpg'))):
+				li.setArt({ 'icon': xbmcvfs.translatePath(os.path.join('special://home','addons',str(aid),'resources','icon.jpg'))})
 			else:
 				xbmc.log(msg='Retro BIOS Tool: No icon found for %(current_aid)s' % {'current_aid':aid}, level=xbmc.LOGDEBUG)
 			xbmcplugin.addDirectoryItem(plugin_handle.handle,'',li)
